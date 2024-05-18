@@ -17,7 +17,7 @@ public class FakeStoreProductDTO {
 
     public Product toProduct() {
         Product product = new Product();
-        product.setProductId(id);
+        product.setId(id);
         product.setTitle(title);
         product.setDescription(description);
         product.setImageUrl(image);
@@ -28,9 +28,5 @@ public class FakeStoreProductDTO {
         return product;
     }
 
-    public Category toCategory() {
-        Category category = new Category();
-        category.setTitle(title);
-        return category;
-    }
+
 }

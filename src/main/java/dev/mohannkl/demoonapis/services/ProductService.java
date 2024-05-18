@@ -1,7 +1,6 @@
 package dev.mohannkl.demoonapis.services;
 
 import dev.mohannkl.demoonapis.exceptions.ProductNotFoundException;
-import dev.mohannkl.demoonapis.models.Category;
 import dev.mohannkl.demoonapis.models.Product;
 
 import java.util.List;
@@ -15,5 +14,11 @@ public interface ProductService {
 
     public List<Product> getAllProducts();
 
+
+    public List<Product> getProductsInASpecificCategory(String categoryType);
+
+    public Product updateProduct(Product product, long productId);
+
+    public void deleteProduct(long productId);
 
 }

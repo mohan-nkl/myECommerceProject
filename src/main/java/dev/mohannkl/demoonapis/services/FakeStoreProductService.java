@@ -2,7 +2,6 @@ package dev.mohannkl.demoonapis.services;
 
 import dev.mohannkl.demoonapis.DTOs.FakeStoreProductDTO;
 import dev.mohannkl.demoonapis.exceptions.ProductNotFoundException;
-import dev.mohannkl.demoonapis.models.Category;
 import dev.mohannkl.demoonapis.models.Product;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -11,7 +10,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@Service("fakeStoreProductService")
 public class FakeStoreProductService implements ProductService{
 
     RestTemplate restTemplate;
@@ -56,6 +55,42 @@ public class FakeStoreProductService implements ProductService{
             products.add(fakeStoreProductDTO.toProduct());
         }
         return products;
+    }
+
+
+    @Override
+    public List<Product> getProductsInASpecificCategory(String category) {
+
+        FakeStoreProductDTO[] fakeStoreProductDTOS =
+                restTemplate.getForObject(
+                "https://fakestoreapi.com/products/category/" +
+                category, FakeStoreProductDTO[].class);
+        List<Product> products = new ArrayList<>();
+        for (FakeStoreProductDTO fakeStoreProductDTO: fakeStoreProductDTOS) {
+            products.add(fakeStoreProductDTO.toProduct());
+        }
+        return products;
+    }
+
+    public Product updateProduct(Product product, long productId) {
+        FakeStoreProductDTO fakeStoreProductDTO = new FakeStoreProductDTO();
+        fakeStoreProductDTO.setId(product.getId());
+        fakeStoreProductDTO.setPrice(product.getPrice());
+        fakeStoreProductDTO.setImage(product.getImageUrl());
+        fakeStoreProductDTO.setDescription(product.getDescription());
+        fakeStoreProductDTO.setCategory(product.getCategory().getTitle());
+        fakeStoreProductDTO.setTitle(product.getTitle());
+
+        restTemplate.put("https://fakestoreapi.com/products/"
+                                        + productId, fakeStoreProductDTO);
+
+
+        return fakeStoreProductDTO.toProduct();
+    }
+
+    public void deleteProduct(long productId) {
+
+        restTemplate.delete("https://fakestoreapi.com/products/" + productId);
     }
 
 

@@ -6,6 +6,7 @@ import dev.mohannkl.demoonapis.exceptions.ProductNotFoundException;
 import dev.mohannkl.demoonapis.models.Category;
 import dev.mohannkl.demoonapis.models.Product;
 import dev.mohannkl.demoonapis.services.ProductService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,9 @@ import java.util.List;
 public class ProductController {
 
     ProductService productService;
-    public ProductController(ProductService prodServ) {
+    public ProductController(@Qualifier("ownDatabaseProductService")
+                             ProductService prodServ) {
+
         this.productService = prodServ;
     }
 
@@ -39,12 +42,10 @@ public class ProductController {
 
     @GetMapping("/products")
     public List<Product> getAllProducts() {
+
         return productService.getAllProducts();
     }
 
-    public void updateProduct() {
-
-    }
 
     @ExceptionHandler(ProductNotFoundException.class)
     public ResponseEntity<ErrorDTO> handleProductNotFoundException(ProductNotFoundException exception) {
@@ -53,4 +54,21 @@ public class ProductController {
         return new ResponseEntity<>(errorDTO, HttpStatus.NOT_FOUND);
     }
 
+    @GetMapping("/categories/{category}/products")
+    public List<Product> getProductsInASpecificCategory(@PathVariable("category")
+                                                      String category) {
+        return productService.getProductsInASpecificCategory(category);
+    }
+
+    @PatchMapping("/products/{productId}")
+    public Product updateProduct(@PathVariable("productId") long productId,
+                                 @RequestBody Product product) throws ProductNotFoundException {
+        return productService.updateProduct(product, productId);
+    }
+
+    @DeleteMapping("/products/{productId}")
+    public void deleteProduct(@PathVariable("productId") long productId) {
+
+        productService.deleteProduct(productId);
+    }
 }
